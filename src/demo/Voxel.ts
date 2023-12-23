@@ -57,7 +57,7 @@ export class Voxel extends THREE.Mesh {
       new THREE.BufferAttribute(positions, 3),
     );
 
-    const material = new THREE.MeshBasicMaterial({color: 0x00ff00})
+    const material = new THREE.MeshBasicMaterial({color: 0x00ff00, wireframe: true})
 
     super(geometry, material);
   }
