@@ -64,11 +64,13 @@ export class Chunk {
         const geometry = new THREE.BufferGeometry()
         const texture = new THREE.TextureLoader().load('assets/textures/cobblestone.png')
         texture.magFilter = THREE.NearestFilter
-        texture.minFilter = THREE.LinearFilter
+        texture.minFilter = THREE.NearestFilter
         texture.colorSpace = THREE.DisplayP3ColorSpace
         const material = new THREE.MeshBasicMaterial({ wireframe: false, map: texture })
 
         const allIndices: number[] = []
+        const allUvs: number[] = []
+        const allNormals: number[] = []
         const allPositions: number[] = []
 
         const geometryBuilder = new GeometryBuilder()
@@ -87,23 +89,29 @@ export class Chunk {
                         !this.getBlock(x + 1, y, z),
                         !this.getBlock(x, y, z - 1),
                         !this.getBlock(x, y, z + 1),
-                        !this.getBlock(x, y + 1, z),
                         !this.getBlock(x, y - 1, z),
+                        !this.getBlock(x, y + 1, z),
                     ]
-                    const { positions, indices } = geometryBuilder.getGeometry(vx, vy, vz, faceMask)
 
-                    allIndices.push(...indices)
+                    const { positions, uvs, normals, indices } = geometryBuilder.getGeometry(vx, vy, vz, faceMask)
                     allPositions.push(...positions)
+                    allUvs.push(...uvs)
+                    allNormals.push(...normals)
+                    allIndices.push(...indices)
                 }
             }
         }
 
         const positionsBuffer = new THREE.BufferAttribute(new Float32Array(allPositions), 3)
+        const uvsBuffer = new THREE.BufferAttribute(new Float32Array(allUvs), 2)
+        const normalsBuffer = new THREE.BufferAttribute(new Float32Array(allNormals), 3)
 
         geometry.setAttribute('position', positionsBuffer)
-        geometry.setIndex(allIndices)
+        geometry.setAttribute('uv', uvsBuffer)
+        geometry.setAttribute('normal', normalsBuffer)
 
-        const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material)
-        return mesh
+        // TODO: set geometry index
+
+        return new THREE.Mesh(geometry, material)
     }
 }

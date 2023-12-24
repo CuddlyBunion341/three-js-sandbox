@@ -1,35 +1,60 @@
+type GeometryData = {
+  positions: number[]
+  normals: number[]
+  uvs: number[]
+  indices: number[]
+}
+
 export class GeometryBuilder {
-
-  private static indices = [
-    // left
-    0, 2, 6,
-    0, 4, 6,
-    // right
-    1, 3, 7,
-    1, 5, 7,
+  private static vertices = [
     // front
-    0, 2, 3,
-    0, 1, 3,
-    // back
-    4, 6, 7,
-    4, 5, 7,
-    // top
-    2, 6, 7,
-    2, 3, 7,
-    // bottom
-    0, 4, 5,
-    0, 1, 5,
-  ]
+    { pos: [- 1, - 1, 1], norm: [0, 0, 1], uv: [0, 0], },
+    { pos: [1, - 1, 1], norm: [0, 0, 1], uv: [1, 0], },
+    { pos: [- 1, 1, 1], norm: [0, 0, 1], uv: [0, 1], },
 
-  private static positions = [
-    -1, -1, 1, // 0
-    1, -1, 1, // 1
-    -1, 1, 1, // 2
-    1, 1, 1, // 3
-    -1, -1, -1, // 4
-    1, -1, -1, // 5
-    -1, 1, -1, // 6
-    1, 1, -1 // 7
+    { pos: [- 1, 1, 1], norm: [0, 0, 1], uv: [0, 1], },
+    { pos: [1, - 1, 1], norm: [0, 0, 1], uv: [1, 0], },
+    { pos: [1, 1, 1], norm: [0, 0, 1], uv: [1, 1], },
+    // right
+    { pos: [1, - 1, 1], norm: [1, 0, 0], uv: [0, 0], },
+    { pos: [1, - 1, - 1], norm: [1, 0, 0], uv: [1, 0], },
+    { pos: [1, 1, 1], norm: [1, 0, 0], uv: [0, 1], },
+
+    { pos: [1, 1, 1], norm: [1, 0, 0], uv: [0, 1], },
+    { pos: [1, - 1, - 1], norm: [1, 0, 0], uv: [1, 0], },
+    { pos: [1, 1, - 1], norm: [1, 0, 0], uv: [1, 1], },
+    // back
+    { pos: [1, - 1, - 1], norm: [0, 0, - 1], uv: [0, 0], },
+    { pos: [- 1, - 1, - 1], norm: [0, 0, - 1], uv: [1, 0], },
+    { pos: [1, 1, - 1], norm: [0, 0, - 1], uv: [0, 1], },
+
+    { pos: [1, 1, - 1], norm: [0, 0, - 1], uv: [0, 1], },
+    { pos: [- 1, - 1, - 1], norm: [0, 0, - 1], uv: [1, 0], },
+    { pos: [- 1, 1, - 1], norm: [0, 0, - 1], uv: [1, 1], },
+    // left
+    { pos: [- 1, - 1, - 1], norm: [- 1, 0, 0], uv: [0, 0], },
+    { pos: [- 1, - 1, 1], norm: [- 1, 0, 0], uv: [1, 0], },
+    { pos: [- 1, 1, - 1], norm: [- 1, 0, 0], uv: [0, 1], },
+
+    { pos: [- 1, 1, - 1], norm: [- 1, 0, 0], uv: [0, 1], },
+    { pos: [- 1, - 1, 1], norm: [- 1, 0, 0], uv: [1, 0], },
+    { pos: [- 1, 1, 1], norm: [- 1, 0, 0], uv: [1, 1], },
+    // top
+    { pos: [1, 1, - 1], norm: [0, 1, 0], uv: [0, 0], },
+    { pos: [- 1, 1, - 1], norm: [0, 1, 0], uv: [1, 0], },
+    { pos: [1, 1, 1], norm: [0, 1, 0], uv: [0, 1], },
+
+    { pos: [1, 1, 1], norm: [0, 1, 0], uv: [0, 1], },
+    { pos: [- 1, 1, - 1], norm: [0, 1, 0], uv: [1, 0], },
+    { pos: [- 1, 1, 1], norm: [0, 1, 0], uv: [1, 1], },
+    // bottom
+    { pos: [1, - 1, 1], norm: [0, - 1, 0], uv: [0, 0], },
+    { pos: [- 1, - 1, 1], norm: [0, - 1, 0], uv: [1, 0], },
+    { pos: [1, - 1, - 1], norm: [0, - 1, 0], uv: [0, 1], },
+
+    { pos: [1, - 1, - 1], norm: [0, - 1, 0], uv: [0, 1], },
+    { pos: [- 1, - 1, 1], norm: [0, - 1, 0], uv: [1, 0], },
+    { pos: [- 1, - 1, - 1], norm: [0, - 1, 0], uv: [1, 1], },
   ]
 
   private vertexCount: number
@@ -38,18 +63,20 @@ export class GeometryBuilder {
     this.vertexCount = 0
   }
 
-  getGeometry(x: number, y: number, z: number, faceMask: boolean[]) {
-    const indices = GeometryBuilder.indices.filter((_, i) => {
-      return faceMask[Math.floor(i / 6)]
-      return true
-    }).map((v => v + this.vertexCount))
+  getGeometry(x: number, y: number, z: number, faceMask: boolean[]): GeometryData {
+    const positions: number[] = []
+    const normals: number[] = []
+    const uvs: number[] = []
+    const indices: number[] = []
 
-    const positions = GeometryBuilder.positions.map((v, i) => {
-      return [x, y, z][i % 3] + v
+    GeometryBuilder.vertices.forEach(({ pos, norm, uv }, index) => {
+      faceMask[Math.floor(index / 6)]
+
+      positions.push(...pos.map((v, i) => v + [x, y, z][i % 3] * 2))
+      normals.push(...norm)
+      uvs.push(...uv)
     })
 
-    // this.vertexCount += GeometryBuilder.positions.length / 3
-
-    return { positions: positions, indices: indices }
+    return { positions, normals, uvs, indices }
   }
 }
