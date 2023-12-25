@@ -43,8 +43,8 @@ export class ChunkMesher extends ChunkData {
         const geometryBuilder = new GeometryBuilder()
 
         for (let x = 0; x < ChunkData.WIDTH; x++) {
-            for (let y = 0; y < ChunkData.HEIGHT; y++) {
-                for (let z = 0; z < ChunkData.DEPTH; z++) {
+            for (let z = 0; z < ChunkData.DEPTH; z++) {
+                for (let y = 0; y < ChunkData.HEIGHT; y++) {
                     if (!this.getUnsafeBlock(x, y, z)) continue
 
                     const faceMask = [

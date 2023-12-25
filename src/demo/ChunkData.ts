@@ -18,12 +18,12 @@ export class ChunkData {
   }
 
   public getBlockIndex(x: number, y: number, z: number) {
-    if (x < 0 || x >= ChunkData.WIDTH || y < 0 || y >= ChunkData.HEIGHT || z < 0 || z > ChunkData.DEPTH) return -1
+    if (x < 0 || x >= ChunkData.WIDTH || y < 0 || y >= ChunkData.HEIGHT || z < 0 || z >= ChunkData.DEPTH) return -1
     return this.getUnsafeBlockIndex(x, y, z)
   }
 
   public getUnsafeBlockIndex(x: number, y: number, z: number) {
-    return x + ChunkData.WIDTH * (y + ChunkData.DEPTH * z)
+    return x + ChunkData.WIDTH * (y + ChunkData.HEIGHT * z)
   }
 
   public getBlock(x: number, y: number, z: number) {
