@@ -1390,6 +1390,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"alea@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "alea@npm:1.0.1"
+  checksum: b699177496913b3ea0c1e329e13cb164befb5e5a906b46299e375465a697613e6294e1d617008438d0a714c397ad17ce292ef10126fa76c1ca913e90ef28e81d
+  languageName: node
+  linkType: hard
+
 "ansi-escapes@npm:^4.2.1":
   version: 4.3.2
   resolution: "ansi-escapes@npm:4.3.2"
@@ -4588,6 +4595,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"simplex-noise@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "simplex-noise@npm:4.0.1"
+  checksum: b5458713337129016ae71182e20d2e2e0d01bb62c78cf180276dafe8a59bf1814a66aedd0dfc9bbb70cc549a9bc02f1c9773e4f222a2cff4692cd48e7a2b348b
+  languageName: node
+  linkType: hard
+
 "sisteransi@npm:^1.0.5":
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
@@ -4864,6 +4878,7 @@ __metadata:
     "@types/three": ^0.156.0
     "@typescript-eslint/eslint-plugin": ^6.15.0
     "@typescript-eslint/parser": ^6.15.0
+    alea: ^1.0.1
     eslint: ^8.56.0
     husky: ^8.0.3
     jest: ^29.7.0
@@ -4871,6 +4886,7 @@ __metadata:
     lint-staged: ^13.3.0
     prettier: 2.8.8
     sass: ^1.69.0
+    simplex-noise: ^4.0.1
     three: ^0.157.0
     ts-jest: ^29.1.1
     typescript: ^5.2.2
