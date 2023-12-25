@@ -64,20 +64,41 @@ export class GeometryBuilder {
   }
 
   getGeometry(x: number, y: number, z: number, faceMask: boolean[]): GeometryData {
-    const positions: number[] = []
-    const normals: number[] = []
-    const uvs: number[] = []
-    const indices: number[] = []
+    // 2 triangles * 3 vertices per triangle * 6 faces
+    const maxVertices = 2 * 3 * 6
+
+    const positions: number[] = Array(maxVertices * 3)
+    const normals: number[] = Array(maxVertices * 3)
+    const uvs: number[] = Array(maxVertices * 2)
+    const indices: number[] = Array(maxVertices)
+
+    let lastIndex = 0
 
     GeometryBuilder.vertices.forEach(({ pos, norm, uv }, index) => {
       if (!faceMask[Math.floor(index / 6)]) return
 
-      positions.push(...pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 3))
-      normals.push(...norm)
-      uvs.push(...uv)
-      indices.push(index)
+      const vertexPositions = pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 2)
+      positions[lastIndex * 3 + 0] = vertexPositions[0]
+      positions[lastIndex * 3 + 1] = vertexPositions[1]
+      positions[lastIndex * 3 + 2] = vertexPositions[2]
+
+      normals[lastIndex * 3 + 0] = norm[0]
+      normals[lastIndex * 3 + 1] = norm[1]
+      normals[lastIndex * 3 + 2] = norm[2]
+
+      uvs[lastIndex * 2 + 0] = uv[0]
+      uvs[lastIndex * 2 + 1] = uv[1]
+
+      indices[lastIndex] = index
+
+      lastIndex++
     })
 
-    return { positions, normals, uvs, indices }
+    const slicedPositions = positions.slice(0, lastIndex * 3)
+    const slicedNormals = normals.slice(0, lastIndex * 3)
+    const slicedUvs = uvs.slice(0, lastIndex * 2)
+    const slicedIndices = indices.slice(0, lastIndex)
+
+    return { positions: slicedPositions, normals: slicedNormals, uvs: slicedUvs, indices: slicedIndices }
   }
 }
