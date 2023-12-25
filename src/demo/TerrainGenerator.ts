@@ -61,14 +61,14 @@ export class TerrainGenerator {
   constructor(seed = 0) {
     this.noise = new LayeredNoise(seed)
 
-    const visualizer = new NoiseVisualizer(256, 256, (x, y) => this.noise.sample2d(x, y), { min: -14, max: 10 })
-    const url = visualizer.generateMap()
+    // const visualizer = new NoiseVisualizer(256, 256, (x, y) => this.noise.sample2d(x, y), { min: -14, max: 10 })
+    // const url = visualizer.generateMap()
 
-    const img = document.createElement('img')
-    img.src = url
+    // const img = document.createElement('img')
+    // img.src = url
 
-    document.body.appendChild(img)
-    img.style = "width: 100%; height: 100%; position: absolute; top: 0; left: 0; image-rendering: pixelated; object-fit: contain"
+    // document.body.appendChild(img)
+    // img.style = "width: 100%; height: 100%; position: absolute; top: 0; left: 0; image-rendering: pixelated; object-fit: contain"
   }
 
   public getBlock(x: number, y: number, z: number) {
@@ -80,7 +80,7 @@ export class TerrainGenerator {
     const caveWidth = 2
 
 
-    const caveAir = (density > 0 - caveWidth && density < 0 + caveWidth)
+    const caveAir = (density > 10)
     const atSurfaceLevel = (y < minSurfaceY + continentalNess)
 
     return (atSurfaceLevel && !caveAir) ? STONE : AIR

@@ -12,7 +12,7 @@ export class Demo implements Experience {
   init() {
     const world = new World(69420)
 
-    const renderDistance = 5
+    const renderDistance = 10
     for (let x = 0; x < renderDistance; x++) {
       for (let z = 0; z < renderDistance; z++) {
         const chunk = world.generateChunk(x, z)
