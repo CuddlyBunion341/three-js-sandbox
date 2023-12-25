@@ -1,7 +1,7 @@
 export class ChunkData {
-  public static WIDTH = 2
-  public static HEIGHT = 2
-  public static DEPTH = 2
+  public static WIDTH = 5
+  public static HEIGHT = 5
+  public static DEPTH = 5
 
   public blocks: Uint8Array
 
@@ -18,7 +18,7 @@ export class ChunkData {
   }
 
   public getBlockIndex(x: number, y: number, z: number) {
-    if (x < 0 || x >= ChunkData.WIDTH || y < 0 || y >= ChunkData.HEIGHT || z < 0 || z >= ChunkData.DEPTH) return -1
+    if (x < 0 || x >= ChunkData.WIDTH || y < 0 || y >= ChunkData.HEIGHT || z < 0 || z > ChunkData.DEPTH) return -1
     return this.getUnsafeBlockIndex(x, y, z)
   }
 

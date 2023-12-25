@@ -78,6 +78,7 @@ export class GeometryBuilder {
       positions.push(...pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 3))
       normals.push(...norm)
       uvs.push(...uv)
+      indices.push(index)
     })
 
     return { positions, normals, uvs, indices }

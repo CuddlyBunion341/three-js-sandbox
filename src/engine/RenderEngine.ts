@@ -21,7 +21,7 @@ export class RenderEngine implements GameEntity {
     // this.renderer.shadowMap.enabled = true
     // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
     // this.renderer.setClearColor('#000000')
-    // this.renderer.setSize(this.engine.sizes.width, this.engine.sizes.height)
+    this.renderer.setSize(this.engine.sizes.width, this.engine.sizes.height)
     this.renderer.setPixelRatio(Math.min(this.engine.sizes.pixelRatio, 2))
 
     this.composer = new EffectComposer(this.renderer)

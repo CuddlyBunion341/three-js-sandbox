@@ -41,10 +41,14 @@ export class Chunk extends ChunkData {
         texture.colorSpace = THREE.DisplayP3ColorSpace
         const material = new THREE.MeshBasicMaterial({ wireframe: false, map: texture })
 
-        const allIndices: number[] = []
-        const allUvs: number[] = []
-        const allNormals: number[] = []
-        const allPositions: number[] = []
+        // 6 faces * 2 triangles per face * 3 vertices per triangle
+        const vertexCount = 6 * 2 * 3 * Chunk.WIDTH * Chunk.HEIGHT * Chunk.DEPTH
+
+        const allUvs: number[] = Array(vertexCount * 2)
+        const allNormals: number[] = Array(vertexCount * 3)
+        const allPositions: number[] = Array(vertexCount * 3)
+
+        let lastIndex = 0
 
         const geometryBuilder = new GeometryBuilder()
 
@@ -67,10 +71,17 @@ export class Chunk extends ChunkData {
                     const vz = z + this.z * Chunk.DEPTH
 
                     const { positions, uvs, normals, indices } = geometryBuilder.getGeometry(vx, vy, vz, faceMask)
-                    allPositions.push(...positions)
-                    allNormals.push(...normals)
-                    allIndices.push(...indices)
-                    allUvs.push(...uvs)
+                    for (let i = 0; i < indices.length; i++) {
+                        for (let j = 0; j < 3; j++) {
+                            allPositions[(lastIndex + i) * 3 + j] = positions[i * 3 + j]
+                            allNormals[(lastIndex + i) * 3 + j] = normals[i * 3 + j]
+                        }
+
+                        for (let j = 0; j < 2; j++) {
+                            allUvs[(lastIndex + i) * 2 + j] = uvs[i * 2 + j]
+                        }
+                    }
+                    lastIndex += indices.length
                 }
             }
         }
