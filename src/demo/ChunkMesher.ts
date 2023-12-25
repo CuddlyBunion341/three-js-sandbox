@@ -85,7 +85,7 @@ export class ChunkMesher extends ChunkData {
         geometry.setAttribute('normal', normalsBuffer)
 
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.position.set(this.x * 16, 0, this.z * 16)
+        mesh.position.set(this.x * ChunkData.WIDTH, 0, this.z * ChunkData.DEPTH)
 
         return mesh
     }

@@ -6,6 +6,7 @@ export class TerrainGenerator {
   }
 
   public getBlock(x: number, y: number, z: number) {
-    return Number(Math.random() < 0.2)
+    const newLocal = Number(y < Math.sin((x * z) / 5) * 2)
+    return newLocal
   }
 }

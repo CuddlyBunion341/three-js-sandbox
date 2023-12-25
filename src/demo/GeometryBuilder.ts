@@ -75,7 +75,7 @@ export class GeometryBuilder {
     GeometryBuilder.vertices.forEach(({ pos, norm, uv }, index) => {
       if (!faceMask[Math.floor(index / 6)]) return
 
-      const vertexPositions = pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 1.2)
+      const vertexPositions = pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 1)
       positions[lastIndex * 3 + 0] = vertexPositions[0]
       positions[lastIndex * 3 + 1] = vertexPositions[1]
       positions[lastIndex * 3 + 2] = vertexPositions[2]

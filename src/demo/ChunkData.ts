@@ -1,6 +1,6 @@
 export class ChunkData {
   public static WIDTH = 16
-  public static HEIGHT = 16
+  public static HEIGHT = 32
   public static DEPTH = 16
 
   public blocks: Uint8Array
@@ -10,7 +10,7 @@ export class ChunkData {
   }
 
   constructor() {
-    this.blocks = new Uint8Array(ChunkData.WIDTH * ChunkData.HEIGHT * ChunkData.DEPTH)
+    this.blocks = new Uint8Array(ChunkData.chunkSize)
 
     for (let i = 0; i < ChunkData.chunkSize; i++) {
       this.blocks[i] = 0
