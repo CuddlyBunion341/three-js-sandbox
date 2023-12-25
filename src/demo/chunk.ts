@@ -7,6 +7,7 @@ export class Chunk extends ChunkMesher {
   constructor(x: number, z: number, terrainGenerator: TerrainGenerator) {
     super(x, z)
     this.terrainGenerator = terrainGenerator
+    this.generateTerrain()
   }
 
   public generateTerrain() {

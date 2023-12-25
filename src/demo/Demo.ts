@@ -16,6 +16,9 @@ export class Demo implements Experience {
         const chunk = world.generateChunk(x, z)
         if (!chunk) throw Error(`Chunk ${x}x${z} could not be created!`)
         this.engine.scene.add(chunk.mesh)
+
+        const boxHelper = new THREE.BoxHelper(chunk.mesh)
+        this.engine.scene.add(boxHelper)
       }
     }
 

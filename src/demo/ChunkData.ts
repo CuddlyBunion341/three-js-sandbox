@@ -13,7 +13,7 @@ export class ChunkData {
     this.blocks = new Uint8Array(ChunkData.WIDTH * ChunkData.HEIGHT * ChunkData.DEPTH)
 
     for (let i = 0; i < ChunkData.chunkSize; i++) {
-      this.blocks[i] = 1
+      this.blocks[i] = 0
     }
   }
 
