@@ -57,10 +57,8 @@ export class GeometryBuilder {
     { pos: [- 1, 1, 1], norm: [0, 1, 0], uv: [1, 1], },
   ]
 
-  private vertexCount: number
-
   constructor() {
-    this.vertexCount = 0
+    // TODO: implement vertex indices
   }
 
   getGeometry(x: number, y: number, z: number, faceMask: boolean[]): GeometryData {
@@ -77,7 +75,7 @@ export class GeometryBuilder {
     GeometryBuilder.vertices.forEach(({ pos, norm, uv }, index) => {
       if (!faceMask[Math.floor(index / 6)]) return
 
-      const vertexPositions = pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 2)
+      const vertexPositions = pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 1.2)
       positions[lastIndex * 3 + 0] = vertexPositions[0]
       positions[lastIndex * 3 + 1] = vertexPositions[1]
       positions[lastIndex * 3 + 2] = vertexPositions[2]
