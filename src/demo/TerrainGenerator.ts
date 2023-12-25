@@ -1,27 +1,52 @@
-import { NoiseFunction2D, createNoise2D } from "simplex-noise"
+import { NoiseFunction2D, NoiseFunction3D, createNoise2D, createNoise3D } from "simplex-noise"
 import alea from "alea"
+import Spline from "typescript-cubic-spline"
+import { AIR, STONE } from "./Blocks"
 
-class LayeredNoise {
+export class LayeredNoise {
   private baseFrequency = 0.005
+  private baseFrequency3d = 0.001
+
   private baseAmplitude = 20
   private octaves = 4
   private octaveFactor = 2
 
-  private noise: NoiseFunction2D
+  private spline: Spline
+
+  private noise2d: NoiseFunction2D
+  private noise3d: NoiseFunction3D
 
   constructor(seed = 0) {
     const prng = alea(seed)
-    const noise = createNoise2D(prng)
-    this.noise = noise
+    this.noise2d = createNoise2D(prng)
+    this.noise3d = createNoise3D(prng)
+
+    const xs = [-1, 0.3, 0.4, 1]
+    const ys = [0, 5, 16, 16]
+    this.spline = new Spline(xs, ys)
   }
 
   sample2d(x: number, z: number) {
     let value = 0
 
     for (let o = 1; o <= this.octaves; o++) {
-      value += this.noise(
+      value += this.noise2d(
         x * this.baseFrequency * this.octaveFactor * o,
         z * this.baseFrequency * this.octaveFactor * o
+      ) * this.baseAmplitude / (this.octaveFactor * o)
+    }
+
+    return value
+  }
+
+  sample3d(x: number, y: number, z: number) {
+    let value = 0
+
+    for (let o = 1; o <= 8; o++) {
+      value += this.noise3d(
+        x * this.baseFrequency3d * this.octaveFactor * o,
+        y * this.baseFrequency3d * this.octaveFactor * o * 2,
+        z * this.baseFrequency3d * this.octaveFactor * o,
       ) * this.baseAmplitude / (this.octaveFactor * o)
     }
 
@@ -37,9 +62,17 @@ export class TerrainGenerator {
   }
 
   public getBlock(x: number, y: number, z: number) {
-    const minSurfaceY = 10
-    const surfaceY = minSurfaceY + this.noise.sample2d(x, z)
+    const continentalNess = this.noise.sample2d(x, z)
+    const minSurfaceY = 64
 
-    return (y < surfaceY) ? 1 : 0
+    const density = this.noise.sample3d(x, y, z)
+
+    const caveWidth = 2
+
+
+    const caveAir = (density > 0 - caveWidth && density < 0 + caveWidth)
+    const atSurfaceLevel = (y < minSurfaceY + continentalNess)
+
+    return (atSurfaceLevel && !caveAir) ? STONE : AIR
   }
 }

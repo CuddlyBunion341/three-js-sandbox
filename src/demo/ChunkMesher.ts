@@ -29,7 +29,7 @@ export class ChunkMesher extends ChunkData {
         texture.minFilter = THREE.NearestFilter
         texture.colorSpace = THREE.DisplayP3ColorSpace
         // const material = new THREE.MeshBasicMaterial({ wireframe: false, map: texture })
-        const material = new THREE.MeshNormalMaterial({ wireframe: false })
+        const material = new THREE.MeshMatcapMaterial()
 
         // 6 faces * 2 triangles per face * 3 vertices per triangle
         const maxVertexCount = 6 * 2 * 3 * ChunkData.WIDTH * ChunkData.HEIGHT * ChunkData.DEPTH

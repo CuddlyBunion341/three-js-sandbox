@@ -35,6 +35,7 @@
     "sass": "^1.69.0",
     "simplex-noise": "^4.0.1",
     "typescript": "^5.2.2",
+    "typescript-cubic-spline": "^1.0.1",
     "vite": "^4.4.11",
     "vite-plugin-glsl": "^1.1.2"
   },

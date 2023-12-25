@@ -4890,6 +4890,7 @@ __metadata:
     three: ^0.157.0
     ts-jest: ^29.1.1
     typescript: ^5.2.2
+    typescript-cubic-spline: ^1.0.1
     vite: ^4.4.11
     vite-plugin-glsl: ^1.1.2
   languageName: unknown
@@ -4994,6 +4995,13 @@ __metadata:
   version: 1.4.0
   resolution: "type-fest@npm:1.4.0"
   checksum: b011c3388665b097ae6a109a437a04d6f61d81b7357f74cbcb02246f2f5bd72b888ae33631b99871388122ba0a87f4ff1c94078e7119ff22c70e52c0ff828201
+  languageName: node
+  linkType: hard
+
+"typescript-cubic-spline@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "typescript-cubic-spline@npm:1.0.1"
+  checksum: 0fbda78c7cbb1ed07286553d875153d9ff50ebfac72c775f7723ad99a959737005f984ac3020d2444769a2cc1840b573e8c66ecaf954cf61f9b26792c945be1e
   languageName: node
   linkType: hard
 
