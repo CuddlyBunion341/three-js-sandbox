@@ -15,7 +15,6 @@ export class ChunkMesher extends ChunkData {
         this.z = z
     }
 
-
     public get mesh() {
         if (this._mesh) return this._mesh
 
