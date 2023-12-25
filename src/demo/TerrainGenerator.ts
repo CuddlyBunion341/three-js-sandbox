@@ -2,21 +2,29 @@ import { NoiseFunction2D, createNoise2D } from "simplex-noise"
 import alea from "alea"
 
 class LayeredNoise {
-  private baseFrequency = 0.01
-  private baseAmplitude = 5
-  private octaves: number
+  private baseFrequency = 0.005
+  private baseAmplitude = 20
+  private octaves = 4
+  private octaveFactor = 2
 
   private noise: NoiseFunction2D
 
-  constructor(seed = 0, octaves = 1) {
+  constructor(seed = 0) {
     const prng = alea(seed)
     const noise = createNoise2D(prng)
-    this.octaves = octaves
     this.noise = noise
   }
 
   sample2d(x: number, z: number) {
-    const value = this.noise(x * this.baseFrequency, z * this.baseFrequency) * this.baseAmplitude
+    let value = 0
+
+    for (let o = 1; o <= this.octaves; o++) {
+      value += this.noise(
+        x * this.baseFrequency * this.octaveFactor * o,
+        z * this.baseFrequency * this.octaveFactor * o
+      ) * this.baseAmplitude / (this.octaveFactor * o)
+    }
+
     return value
   }
 }
