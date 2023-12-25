@@ -42,11 +42,11 @@ export class Chunk extends ChunkData {
         const material = new THREE.MeshBasicMaterial({ wireframe: false, map: texture })
 
         // 6 faces * 2 triangles per face * 3 vertices per triangle
-        const vertexCount = 6 * 2 * 3 * Chunk.WIDTH * Chunk.HEIGHT * Chunk.DEPTH
+        const maxVertexCount = 6 * 2 * 3 * Chunk.WIDTH * Chunk.HEIGHT * Chunk.DEPTH
 
-        const allUvs: number[] = Array(vertexCount * 2)
-        const allNormals: number[] = Array(vertexCount * 3)
-        const allPositions: number[] = Array(vertexCount * 3)
+        const allUvs: number[] = Array(maxVertexCount * 2)
+        const allNormals: number[] = Array(maxVertexCount * 3)
+        const allPositions: number[] = Array(maxVertexCount * 3)
 
         let lastIndex = 0
 
@@ -86,9 +86,13 @@ export class Chunk extends ChunkData {
             }
         }
 
-        const positionsBuffer = new THREE.BufferAttribute(new Float32Array(allPositions), 3)
-        const uvsBuffer = new THREE.BufferAttribute(new Float32Array(allUvs), 2)
-        const normalsBuffer = new THREE.BufferAttribute(new Float32Array(allNormals), 3)
+        const slicedPositions = allPositions.slice(0, lastIndex * 3)
+        const slicedNormals = allNormals.slice(0, lastIndex * 3)
+        const slicedUvs = allUvs.slice(0, lastIndex * 2)
+
+        const positionsBuffer = new THREE.BufferAttribute(new Float32Array(slicedPositions), 3)
+        const uvsBuffer = new THREE.BufferAttribute(new Float32Array(slicedUvs), 2)
+        const normalsBuffer = new THREE.BufferAttribute(new Float32Array(slicedNormals), 3)
 
         geometry.setAttribute('position', positionsBuffer)
         geometry.setAttribute('uv', uvsBuffer)

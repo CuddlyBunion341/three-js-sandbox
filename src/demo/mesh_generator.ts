@@ -69,11 +69,8 @@ export class GeometryBuilder {
     const uvs: number[] = []
     const indices: number[] = []
 
-    console.log(faceMask)
-
     GeometryBuilder.vertices.forEach(({ pos, norm, uv }, index) => {
       if (!faceMask[Math.floor(index / 6)]) return
-      console.log(index, Math.floor(index / 6))
 
       positions.push(...pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 3))
       normals.push(...norm)
