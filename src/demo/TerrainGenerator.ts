@@ -2,6 +2,7 @@ import { NoiseFunction2D, NoiseFunction3D, createNoise2D, createNoise3D } from "
 import alea from "alea"
 import Spline from "typescript-cubic-spline"
 import { AIR, STONE } from "./Blocks"
+import { NoiseVisualizer } from "./NoiseVisualizer"
 
 export class LayeredNoise {
   private baseFrequency = 0.005
@@ -59,6 +60,15 @@ export class TerrainGenerator {
 
   constructor(seed = 0) {
     this.noise = new LayeredNoise(seed)
+
+    const visualizer = new NoiseVisualizer(256, 256, (x, y) => this.noise.sample2d(x, y), { min: -14, max: 10 })
+    const url = visualizer.generateMap()
+
+    const img = document.createElement('img')
+    img.src = url
+
+    document.body.appendChild(img)
+    img.style = "width: 100%; height: 100%; position: absolute; top: 0; left: 0; image-rendering: pixelated; object-fit: contain"
   }
 
   public getBlock(x: number, y: number, z: number) {

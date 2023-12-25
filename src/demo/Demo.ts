@@ -12,15 +12,12 @@ export class Demo implements Experience {
   init() {
     const world = new World(69420)
 
-    const renderDistance = 10
+    const renderDistance = 5
     for (let x = 0; x < renderDistance; x++) {
       for (let z = 0; z < renderDistance; z++) {
         const chunk = world.generateChunk(x, z)
         if (!chunk) throw Error(`Chunk ${x}x${z} could not be created!`)
         this.engine.scene.add(chunk.mesh)
-
-        const boxHelper = new THREE.BoxHelper(chunk.mesh)
-        this.engine.scene.add(boxHelper)
       }
     }
 
