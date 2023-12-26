@@ -38,6 +38,10 @@ export class TextureAtlas {
     this.texture.colorSpace = DisplayP3ColorSpace
   }
 
+  public get dataUrl() {
+    return this.canvas.toDataURL
+  }
+
   private calculateTextureUvs() {
     const textureUvs: TextureUvs = {}
 
@@ -50,15 +54,14 @@ export class TextureAtlas {
       for (let x = 0; x < this.size; x++) {
         for (let z = 0; z < this.size; z++) {
           textureUvs[this.fileNames[index]] = {
-            u: [x * uvFactor, (x + 1) * uvFactor],
-            v: [1 - z * uvFactor, 1 - (z + 1) * uvFactor],
+            u: [z * uvFactor, (z + 1) * uvFactor],
+            v: [1 - (x + 1) * uvFactor, 1 - x * uvFactor],
           }
 
           if (++index >= this.fileNames.length) return
         }
       }
-    }
-    )()
+    })()
 
     return textureUvs
   }

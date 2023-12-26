@@ -10,7 +10,7 @@ function topSideBottom(top: string, side: string, bottom: string) {
   uniqueTextures.add(side)
   uniqueTextures.add(bottom)
 
-  return [side, side, side, side, top, bottom]
+  return [side, side, side, side, bottom, top]
 }
 
 export type BlockTexture = {

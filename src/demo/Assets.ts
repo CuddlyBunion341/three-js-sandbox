@@ -1,4 +1,4 @@
-import { MeshMatcapMaterial } from "three";
+import { MeshBasicMaterial, MeshMatcapMaterial } from "three";
 import { TextureAtlas } from "./TextureAtlas";
 import { blocks, uniqueTextures } from "./Blocks";
 
@@ -18,4 +18,4 @@ blocks.forEach(block => {
   })
 })
 
-export const material = new MeshMatcapMaterial({ map: atlas.texture, vertexColors: true })
+export const material = new MeshBasicMaterial({ map: atlas.texture, wireframe: false, vertexColors: true })

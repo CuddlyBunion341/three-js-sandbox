@@ -78,8 +78,22 @@ export class TerrainGenerator {
     const density = this.noise.sample3d(x, y, z)
 
     const caveAir = (density > 10)
-    const atSurfaceLevel = (y < minSurfaceY + continentalNess)
 
-    return (atSurfaceLevel && !caveAir) ? BlockTypes.STONE : BlockTypes.AIR
+    if (caveAir) return BlockTypes.AIR
+
+    const surfaceLevel = minSurfaceY + continentalNess
+
+    const belowSurfaceLevel = (y < surfaceLevel)
+    const atSurfaceLevel = (y === Math.floor(surfaceLevel))
+
+    if (atSurfaceLevel) {
+      return BlockTypes.GRASS
+    } else if (belowSurfaceLevel) {
+      if (surfaceLevel - y < 5) return BlockTypes.DIRT
+      if (y === 0) return BlockTypes.COBBLESTONE
+      return BlockTypes.STONE
+    } else {
+      return BlockTypes.AIR
+    }
   }
 }
