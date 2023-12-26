@@ -1,16 +1,27 @@
-import { Texture } from "three"
+import { DisplayP3ColorSpace, NearestFilter, Texture } from "three"
+
+export type TextureUvs = Record<string, { u: [number, number], v: [number, number] }>
 
 export class TextureAtlas {
-  static textureSize = 16
+  static readonly textureSize = 16
+  static readonly fileExtension = '.png'
+
+  public readonly texture: Texture
+  public readonly textureUvs: TextureUvs
 
   private readonly size: number
   private readonly fileNames: string[]
   private readonly canvas: HTMLCanvasElement
   private readonly ctx: CanvasRenderingContext2D
+  private readonly basePath: string
 
-  constructor(fileNames: string[]) {
+  constructor(fileNames: string[], basePath: string) {
     this.fileNames = fileNames
+    this.basePath = basePath
+
     this.size = Math.ceil(Math.sqrt(fileNames.length))
+
+    this.textureUvs = this.calculateTextureUvs()
 
     const canvas = this.prepareCanvas()
     this.canvas = canvas
@@ -19,12 +30,41 @@ export class TextureAtlas {
     if (ctx === null) throw new Error(`Canvas rendering context could not be retireved!`)
 
     this.ctx = ctx
+
+    this.texture = new Texture()
+    this.texture.magFilter = NearestFilter
+    this.texture.minFilter = NearestFilter
+    this.texture.colorSpace = DisplayP3ColorSpace
+  }
+
+  private calculateTextureUvs() {
+    const textureUvs: TextureUvs = {}
+
+    let index = 0;
+
+    // TODO: Dryify
+    (() => {
+      for (let x = 0; x < this.size; x++) {
+        for (let z = 0; z < this.size; z++) {
+          const uvFactor = 1 / TextureAtlas.textureSize
+          textureUvs[this.fileNames[index]] = {
+            u: [x * uvFactor, (x + 1) * uvFactor],
+            v: [z * uvFactor, (z + 1) * uvFactor]
+          }
+
+          if (++index >= this.fileNames.length) return
+        }
+      }
+    }
+    )()
+
+    return textureUvs
   }
 
   private loadImages() {
     return Promise.all(this.fileNames.map((filename): Promise<HTMLImageElement> => {
       const image = document.createElement('img')
-      image.src = filename
+      image.src = `${this.basePath}${filename}${TextureAtlas.fileExtension}`
 
       return new Promise((resolve, reject) => {
         image.addEventListener('load', () => {
@@ -42,7 +82,10 @@ export class TextureAtlas {
     const images = await this.loadImages()
     this.drawImages(images)
 
-    return new Texture(this.canvas)
+    this.texture.image = this.canvas
+    this.texture.needsUpdate = true
+
+    return this.texture
   }
 
   private drawImages(images: HTMLImageElement[]) {
@@ -52,7 +95,7 @@ export class TextureAtlas {
       for (let z = 0; z < this.size; z++) {
         this.drawImage(x, z, images[index])
 
-        if (index++ >= this.fileNames.length) return
+        if (++index >= this.fileNames.length) return
       }
     }
   }

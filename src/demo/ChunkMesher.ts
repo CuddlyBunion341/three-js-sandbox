@@ -2,7 +2,8 @@
 import * as THREE from 'three'
 import { GeometryBuilder } from "./GeometryBuilder"
 import { ChunkData } from './ChunkData'
-import { AIR } from './Blocks'
+import { BlockTypes } from './Blocks'
+import { chunkMaterial as material } from './Assets'
 
 export class ChunkMesher extends ChunkData {
     public x: number
@@ -24,6 +25,7 @@ export class ChunkMesher extends ChunkData {
     }
 
     private vertexAO(x: number, y: number, z: number) {
+        // Implemented with assistance of the GPT4 chatbot
         let occlusion = 0;
         const maxOcclusion = 8; // The maximum number of neighbors for a corner vertex.
 
@@ -45,16 +47,12 @@ export class ChunkMesher extends ChunkData {
 
     private isSolid(x: number, y: number, z: number) {
         const block = this.getBlock(x, y, z)
-        return block !== AIR && block !== undefined
+        return block !== BlockTypes.AIR && block !== undefined
     }
 
     private generateMesh() {
         const geometry = new THREE.BufferGeometry()
-        const texture = new THREE.TextureLoader().load('assets/textures/cobblestone.png')
-        texture.magFilter = THREE.NearestFilter
-        texture.minFilter = THREE.NearestFilter
-        texture.colorSpace = THREE.DisplayP3ColorSpace
-        const material = new THREE.MeshBasicMaterial({ wireframe: false, map: texture, vertexColors: true })
+
         // const material = new THREE.MeshMatcapMaterial({ vertexColors: true })
 
         // 6 faces * 2 triangles per face * 3 vertices per triangle
@@ -75,12 +73,12 @@ export class ChunkMesher extends ChunkData {
                     if (!this.getUnsafeBlock(x, y, z)) continue
 
                     const faceMask = [
-                        !this.getBlock(x - 1, y, z),
-                        !this.getBlock(x + 1, y, z),
-                        !this.getBlock(x, y, z - 1),
-                        !this.getBlock(x, y, z + 1),
-                        !this.getBlock(x, y - 1, z),
-                        !this.getBlock(x, y + 1, z),
+                        this.getBlock(x - 1, y, z) === BlockTypes.AIR,
+                        this.getBlock(x + 1, y, z) === BlockTypes.AIR,
+                        this.getBlock(x, y, z - 1) === BlockTypes.AIR,
+                        this.getBlock(x, y, z + 1) === BlockTypes.AIR,
+                        this.getBlock(x, y - 1, z) === BlockTypes.AIR,
+                        this.getBlock(x, y + 1, z) === BlockTypes.AIR,
                     ]
 
                     const { positions, uvs, normals, indices } = geometryBuilder.getGeometry(x, y, z, faceMask)
