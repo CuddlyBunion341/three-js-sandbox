@@ -61,42 +61,34 @@ export class GeometryBuilder {
     // TODO: implement vertex indices
   }
 
-  getGeometry(x: number, y: number, z: number, faceMask: boolean[]): GeometryData {
-    // 2 triangles * 3 vertices per triangle * 6 faces
-    const maxVertices = 2 * 3 * 6
+  public getFace(x: number, y: number, z: number, faceIndex: number) {
+    const vertexCount = 6
+    const positions: number[] = Array(vertexCount * 3)
+    const normals: number[] = Array(vertexCount * 3)
+    const uvs: number[] = Array(vertexCount * 2)
 
-    const positions: number[] = Array(maxVertices * 3)
-    const normals: number[] = Array(maxVertices * 3)
-    const uvs: number[] = Array(maxVertices * 2)
-    const indices: number[] = Array(maxVertices)
+    let index = 0;
 
-    let lastIndex = 0
+    for (let i = faceIndex * 6; i < faceIndex * 6 + 6; i++) {
+      const vertex = GeometryBuilder.vertices[i]
 
-    GeometryBuilder.vertices.forEach(({ pos, norm, uv }, index) => {
-      if (!faceMask[Math.floor(index / 6)]) return
+      const vertexPositions = vertex.pos.map((v, i) => v * 0.5 + [x, y, z][i % 3])
+      const vertexNormals = vertex.norm
 
-      const vertexPositions = pos.map((v, i) => v * 0.5 + [x, y, z][i % 3] * 1)
-      positions[lastIndex * 3 + 0] = vertexPositions[0]
-      positions[lastIndex * 3 + 1] = vertexPositions[1]
-      positions[lastIndex * 3 + 2] = vertexPositions[2]
+      positions[index * 3 + 0] = vertexPositions[0]
+      positions[index * 3 + 1] = vertexPositions[1]
+      positions[index * 3 + 2] = vertexPositions[2]
 
-      normals[lastIndex * 3 + 0] = norm[0]
-      normals[lastIndex * 3 + 1] = norm[1]
-      normals[lastIndex * 3 + 2] = norm[2]
+      normals[index * 3 + 0] = vertexNormals[0]
+      normals[index * 3 + 1] = vertexNormals[1]
+      normals[index * 3 + 2] = vertexNormals[2]
 
-      uvs[lastIndex * 2 + 0] = uv[0]
-      uvs[lastIndex * 2 + 1] = uv[1]
+      uvs[index * 2 + 0] = vertex.uv[0]
+      uvs[index * 2 + 1] = vertex.uv[1]
 
-      indices[lastIndex] = index
+      index++
+    }
 
-      lastIndex++
-    })
-
-    const slicedPositions = positions.slice(0, lastIndex * 3)
-    const slicedNormals = normals.slice(0, lastIndex * 3)
-    const slicedUvs = uvs.slice(0, lastIndex * 2)
-    const slicedIndices = indices.slice(0, lastIndex)
-
-    return { positions: slicedPositions, normals: slicedNormals, uvs: slicedUvs, indices: slicedIndices }
+    return { positions, normals, uvs }
   }
 }

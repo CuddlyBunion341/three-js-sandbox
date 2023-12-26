@@ -2,8 +2,8 @@
 import * as THREE from 'three'
 import { GeometryBuilder } from "./GeometryBuilder"
 import { ChunkData } from './ChunkData'
-import { BlockTypes } from './Blocks'
-import { chunkMaterial as material } from './Assets'
+import { BlockTypes, blocks } from './Blocks'
+import { material as material } from './Assets'
 
 export class ChunkMesher extends ChunkData {
     public x: number
@@ -70,35 +70,51 @@ export class ChunkMesher extends ChunkData {
         for (let x = 0; x < ChunkData.WIDTH; x++) {
             for (let z = 0; z < ChunkData.DEPTH; z++) {
                 for (let y = 0; y < ChunkData.HEIGHT; y++) {
-                    if (!this.getUnsafeBlock(x, y, z)) continue
+                    const blockId = this.getUnsafeBlock(x, y, z)
+                    if (!blockId) continue
+
+                    const blockTextures = blocks[blockId].textures
 
                     const faceMask = [
-                        this.getBlock(x - 1, y, z) === BlockTypes.AIR,
-                        this.getBlock(x + 1, y, z) === BlockTypes.AIR,
-                        this.getBlock(x, y, z - 1) === BlockTypes.AIR,
-                        this.getBlock(x, y, z + 1) === BlockTypes.AIR,
-                        this.getBlock(x, y - 1, z) === BlockTypes.AIR,
-                        this.getBlock(x, y + 1, z) === BlockTypes.AIR,
+                        !this.getBlock(x - 1, y, z),
+                        !this.getBlock(x + 1, y, z),
+                        !this.getBlock(x, y, z - 1),
+                        !this.getBlock(x, y, z + 1),
+                        !this.getBlock(x, y - 1, z),
+                        !this.getBlock(x, y + 1, z),
                     ]
 
-                    const { positions, uvs, normals, indices } = geometryBuilder.getGeometry(x, y, z, faceMask)
-                    for (let i = 0; i < indices.length; i++) {
-                        const ambientOcclusion = this.vertexAO(
-                            Math.floor(positions[i * 3 + 0]),
-                            Math.floor(positions[i * 3 + 1]),
-                            Math.floor(positions[i * 3 + 2]))
+                    const faceCount = 6
+                    const vertexCount = 6
 
-                        for (let j = 0; j < 3; j++) {
-                            allPositions[(lastIndex + i) * 3 + j] = positions[i * 3 + j]
-                            allNormals[(lastIndex + i) * 3 + j] = normals[i * 3 + j]
-                            allColors[(lastIndex + i) * 3 + j] = ambientOcclusion
-                        }
+                    for (let faceIndex = 0; faceIndex < faceCount; faceIndex++) {
+                        if (!faceMask[faceIndex]) continue
 
-                        for (let j = 0; j < 2; j++) {
-                            allUvs[(lastIndex + i) * 2 + j] = uvs[i * 2 + j]
+                        const textureData = blockTextures[faceIndex]
+
+                        const { positions, uvs, normals } = geometryBuilder.getFace(x, y, z, faceIndex)
+
+                        for (let i = 0; i < vertexCount; i++) {
+                            const ambientOcclusion = this.vertexAO(
+                                Math.floor(positions[i * 3 + 0]),
+                                Math.floor(positions[i * 3 + 1]),
+                                Math.floor(positions[i * 3 + 2]))
+
+                            for (let j = 0; j < 3; j++) {
+                                allPositions[(lastIndex + i) * 3 + j] = positions[i * 3 + j]
+                                allNormals[(lastIndex + i) * 3 + j] = normals[i * 3 + j]
+                                allColors[(lastIndex + i) * 3 + j] = ambientOcclusion
+                            }
+
+                            const u = uvs[i * 2 + 0]
+                            const v = uvs[i * 2 + 1]
+
+                            // TODO: refactor
+                            allUvs[(lastIndex + i) * 2 + 0] = (u === 0 ? textureData.u[0] : textureData.u[1])
+                            allUvs[(lastIndex + i) * 2 + 1] = (v === 0 ? textureData.v[0] : textureData.v[1])
                         }
+                        lastIndex += vertexCount
                     }
-                    lastIndex += indices.length
                 }
             }
         }

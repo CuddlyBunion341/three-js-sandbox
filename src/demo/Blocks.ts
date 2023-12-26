@@ -2,7 +2,7 @@ export const uniqueTextures: Set<string> = new Set()
 
 function allSides(texture: string) {
   uniqueTextures.add(texture)
-  return [texture, texture, texture, texture, texture]
+  return [texture, texture, texture, texture, texture, texture]
 }
 
 function topSideBottom(top: string, side: string, bottom: string) {
@@ -46,9 +46,11 @@ export class Block {
 
 export const blocks = [
   new Block('air', false, []),
-  new Block('stone', false, allSides('stone')),
-  new Block('dirt', false, allSides('dirt')),
-  new Block('grass', false, topSideBottom('grass_block_top', 'grass_block_side', 'dirt')),
+  new Block('stone', true, allSides('stone')),
+  new Block('dirt', true, allSides('dirt')),
+  new Block('sand', true, allSides('sand')),
+  new Block('grass', true, topSideBottom('grass_block_top', 'grass_block_side', 'dirt')),
+  new Block('cobblestone', true, allSides('cobblestone'))
 ]
 
 export const BlockTypes = (() => {

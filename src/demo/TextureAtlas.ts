@@ -20,6 +20,7 @@ export class TextureAtlas {
     this.basePath = basePath
 
     this.size = Math.ceil(Math.sqrt(fileNames.length))
+    if (this.size % 2 !== 0) this.size++
 
     this.textureUvs = this.calculateTextureUvs()
 
@@ -44,12 +45,13 @@ export class TextureAtlas {
 
     // TODO: Dryify
     (() => {
+      const uvFactor = 1 / this.size
+
       for (let x = 0; x < this.size; x++) {
         for (let z = 0; z < this.size; z++) {
-          const uvFactor = 1 / TextureAtlas.textureSize
           textureUvs[this.fileNames[index]] = {
             u: [x * uvFactor, (x + 1) * uvFactor],
-            v: [z * uvFactor, (z + 1) * uvFactor]
+            v: [1 - z * uvFactor, 1 - (z + 1) * uvFactor],
           }
 
           if (++index >= this.fileNames.length) return
@@ -93,7 +95,7 @@ export class TextureAtlas {
 
     for (let x = 0; x < this.size; x++) {
       for (let z = 0; z < this.size; z++) {
-        this.drawImage(x, z, images[index])
+        this.drawImage(z, x, images[index])
 
         if (++index >= this.fileNames.length) return
       }

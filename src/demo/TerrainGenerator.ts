@@ -1,8 +1,8 @@
 import { NoiseFunction2D, NoiseFunction3D, createNoise2D, createNoise3D } from "simplex-noise"
 import alea from "alea"
 import Spline from "typescript-cubic-spline"
-import { AIR, STONE } from "./Blocks"
 import { NoiseVisualizer } from "./NoiseVisualizer"
+import { BlockTypes } from "./Blocks"
 
 export class LayeredNoise {
   private baseFrequency = 0.005
@@ -77,12 +77,9 @@ export class TerrainGenerator {
 
     const density = this.noise.sample3d(x, y, z)
 
-    const caveWidth = 2
-
-
     const caveAir = (density > 10)
     const atSurfaceLevel = (y < minSurfaceY + continentalNess)
 
-    return (atSurfaceLevel && !caveAir) ? STONE : AIR
+    return (atSurfaceLevel && !caveAir) ? BlockTypes.STONE : BlockTypes.AIR
   }
 }
