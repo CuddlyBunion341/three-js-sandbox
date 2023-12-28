@@ -50,6 +50,11 @@ export class ChunkMesher extends ChunkData {
         return block !== BlockTypes.AIR && block !== undefined
     }
 
+    private showFace(blockId: number, x: number, y: number, z: number) {
+        const otherBlockId = this.getNeighborBlock(x, y, z)
+        return !otherBlockId || (!blocks[otherBlockId].opaque && blockId !== otherBlockId)
+    }
+
     private generateMesh() {
         const geometry = new THREE.BufferGeometry()
 
@@ -76,12 +81,12 @@ export class ChunkMesher extends ChunkData {
                     const blockTextures = blocks[blockId].textures
 
                     const faceMask = [
-                        !this.getNeighborBlock(x - 1, y, z),
-                        !this.getNeighborBlock(x + 1, y, z),
-                        !this.getNeighborBlock(x, y, z - 1),
-                        !this.getNeighborBlock(x, y, z + 1),
-                        !this.getNeighborBlock(x, y - 1, z),
-                        !this.getNeighborBlock(x, y + 1, z),
+                        this.showFace(blockId, x - 1, y, z),
+                        this.showFace(blockId, x + 1, y, z),
+                        this.showFace(blockId, x, y, z - 1),
+                        this.showFace(blockId, x, y, z + 1),
+                        this.showFace(blockId, x, y - 1, z),
+                        this.showFace(blockId, x, y + 1, z),
                     ]
 
                     const faceCount = 6
@@ -91,6 +96,7 @@ export class ChunkMesher extends ChunkData {
                         if (!faceMask[faceIndex]) continue
 
                         const textureData = blockTextures[faceIndex]
+                        if (!textureData) throw new Error(`Texture[${faceIndex}] not present on block ${blockId}`)
 
                         const { positions, uvs, normals } = geometryBuilder.getFace(x, y, z, faceIndex)
 

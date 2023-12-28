@@ -85,6 +85,10 @@ export class TerrainGenerator {
 
     const belowSurfaceLevel = (y < surfaceLevel)
     const atSurfaceLevel = (y === Math.floor(surfaceLevel))
+    const aboveSurfaceLevel = (y > surfaceLevel)
+    const underSeaLevel = (y < 60)
+
+    if (aboveSurfaceLevel && underSeaLevel) return BlockTypes.WATER
 
     if (atSurfaceLevel) {
       return BlockTypes.GRASS

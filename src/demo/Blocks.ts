@@ -50,7 +50,8 @@ export const blocks = [
   new Block('dirt', true, allSides('dirt')),
   new Block('sand', true, allSides('sand')),
   new Block('grass', true, topSideBottom('grass_block_top', 'grass_block_side', 'dirt')),
-  new Block('cobblestone', true, allSides('cobblestone'))
+  new Block('cobblestone', true, allSides('cobblestone')),
+  new Block('water', false, allSides('flower_rose'))
 ]
 
 export const BlockTypes = (() => {
