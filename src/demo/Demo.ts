@@ -26,7 +26,7 @@ export class Demo implements Experience {
         if (!chunk) throw new Error(`Chunk ${x}x${z} is not pregenerated!`)
         chunk.neighbors = [
           world.getChunk(x - 1, z)!,
-          world.getChunk(x - 1, z)!,
+          world.getChunk(x + 1, z)!,
           world.getChunk(x, z - 1)!,
           world.getChunk(x, z + 1)!,
         ]
