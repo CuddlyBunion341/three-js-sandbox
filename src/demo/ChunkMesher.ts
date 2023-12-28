@@ -76,12 +76,12 @@ export class ChunkMesher extends ChunkData {
                     const blockTextures = blocks[blockId].textures
 
                     const faceMask = [
-                        !this.getBlock(x - 1, y, z),
-                        !this.getBlock(x + 1, y, z),
-                        !this.getBlock(x, y, z - 1),
-                        !this.getBlock(x, y, z + 1),
-                        !this.getBlock(x, y - 1, z),
-                        !this.getBlock(x, y + 1, z),
+                        !this.getNeighborBlock(x - 1, y, z),
+                        !this.getNeighborBlock(x + 1, y, z),
+                        !this.getNeighborBlock(x, y, z - 1),
+                        !this.getNeighborBlock(x, y, z + 1),
+                        !this.getNeighborBlock(x, y - 1, z),
+                        !this.getNeighborBlock(x, y + 1, z),
                     ]
 
                     const faceCount = 6
@@ -95,11 +95,10 @@ export class ChunkMesher extends ChunkData {
                         const { positions, uvs, normals } = geometryBuilder.getFace(x, y, z, faceIndex)
 
                         for (let i = 0; i < vertexCount; i++) {
-                            const ambientOcclusion = this.vertexAO(
+                            const ambientOcclusion = Math.min(this.vertexAO(
                                 Math.floor(positions[i * 3 + 0]),
                                 Math.floor(positions[i * 3 + 1]),
-                                Math.floor(positions[i * 3 + 2]))
-                            const ambientOcclusion = Math.min(this.vertexAO(vx, vy, vz), 0.5)
+                                Math.floor(positions[i * 3 + 2])), 0.5)
 
                             for (let j = 0; j < 3; j++) {
                                 allPositions[(lastIndex + i) * 3 + j] = positions[i * 3 + j]
