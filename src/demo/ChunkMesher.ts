@@ -99,6 +99,7 @@ export class ChunkMesher extends ChunkData {
                                 Math.floor(positions[i * 3 + 0]),
                                 Math.floor(positions[i * 3 + 1]),
                                 Math.floor(positions[i * 3 + 2]))
+                            const ambientOcclusion = Math.min(this.vertexAO(vx, vy, vz), 0.5)
 
                             for (let j = 0; j < 3; j++) {
                                 allPositions[(lastIndex + i) * 3 + j] = positions[i * 3 + j]
