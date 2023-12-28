@@ -2,7 +2,7 @@ import { ChunkMesher } from "./ChunkMesher"
 import { TerrainGenerator } from "./TerrainGenerator"
 
 export class Chunk extends ChunkMesher {
-  private terrainGenerator: TerrainGenerator
+  private readonly terrainGenerator: TerrainGenerator
 
   constructor(x: number, z: number, terrainGenerator: TerrainGenerator) {
     super(x, z)

@@ -1,7 +1,7 @@
 export class ChunkData {
-  public static WIDTH = 16
-  public static HEIGHT = 128
-  public static DEPTH = 16
+  public static readonly WIDTH = 16
+  public static readonly HEIGHT = 128
+  public static readonly DEPTH = 16
 
   public blocks: Uint8Array
 
