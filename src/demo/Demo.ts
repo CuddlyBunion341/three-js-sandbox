@@ -30,10 +30,11 @@ export class Demo implements Experience {
           world.getChunk(x, z - 1)!,
           world.getChunk(x, z + 1)!,
         ]
-        this.engine.scene.add(chunk.mesh)
-
-        const boundingBoxHelper = new THREE.BoxHelper(chunk.mesh)
-        this.engine.scene.add(boundingBoxHelper)
+        chunk.meshes.forEach((mesh) => {
+          this.engine.scene.add(mesh)
+          const boundingBoxHelper = new THREE.BoxHelper(mesh)
+          this.engine.scene.add(boundingBoxHelper)
+        })
       }
     }
 

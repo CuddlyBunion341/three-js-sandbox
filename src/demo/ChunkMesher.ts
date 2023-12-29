@@ -3,13 +3,14 @@ import * as THREE from 'three'
 import { GeometryBuilder } from "./GeometryBuilder"
 import { ChunkData } from './ChunkData'
 import { BlockTypes, blocks } from './Blocks'
-import { material as material } from './Assets'
+import { opaqueMaterial, transparentMaterial } from './Assets'
+import { ChunkGeometry } from './ChunkGeometry'
 
 export class ChunkMesher extends ChunkData {
     public x: number
     public z: number
 
-    private _mesh!: THREE.Mesh
+    private _meshes!: THREE.Mesh[]
 
     constructor(x: number, z: number) {
         super()
@@ -17,11 +18,11 @@ export class ChunkMesher extends ChunkData {
         this.z = z
     }
 
-    public get mesh() {
-        if (this._mesh) return this._mesh
+    public get meshes() {
+        if (this._meshes) return this._meshes
 
-        this._mesh = this.generateMesh()
-        return this._mesh
+        this._meshes = this.generateMeshes()
+        return this._meshes
     }
 
     private vertexAO(x: number, y: number, z: number) {
@@ -55,19 +56,12 @@ export class ChunkMesher extends ChunkData {
         return !otherBlockId || (!blocks[otherBlockId].opaque && blockId !== otherBlockId)
     }
 
-    private generateMesh() {
-        const geometry = new THREE.BufferGeometry()
-
+    private generateMeshes() {
         // 6 faces * 2 triangles per face * 3 vertices per triangle
         const maxVertexCount = 6 * 2 * 3 * ChunkData.WIDTH * ChunkData.HEIGHT * ChunkData.DEPTH
 
-        // TODO: refactor into chunk buffer geometry
-        const allPositions: number[] = Array(maxVertexCount * 3)
-        const allNormals: number[] = Array(maxVertexCount * 3)
-        const allColors: number[] = Array(maxVertexCount * 3)
-        const allUvs: number[] = Array(maxVertexCount * 2)
-
-        let lastIndex = 0
+        const geometryObjects = new Map<string, ChunkGeometry>()
+        geometryObjects.set('solid', new ChunkGeometry(maxVertexCount))
 
         const geometryBuilder = new GeometryBuilder()
 
@@ -77,7 +71,8 @@ export class ChunkMesher extends ChunkData {
                     const blockId = this.getUnsafeBlock(x, y, z)
                     if (!blockId) continue
 
-                    const blockTextures = blocks[blockId].textures
+                    const block = blocks[blockId]
+                    const blockTextures = block.textures
 
                     const faceMask = [
                         this.showFace(blockId, x - 1, y, z),
@@ -105,43 +100,60 @@ export class ChunkMesher extends ChunkData {
                                 Math.floor(positions[i * 3 + 1]),
                                 Math.floor(positions[i * 3 + 2])), 0.5)
 
-                            for (let j = 0; j < 3; j++) {
-                                allPositions[(lastIndex + i) * 3 + j] = positions[i * 3 + j]
-                                allNormals[(lastIndex + i) * 3 + j] = normals[i * 3 + j]
-                                allColors[(lastIndex + i) * 3 + j] = ambientOcclusion
-                            }
+                            const geometryKey = (() => {
+                                if (block.opaque) return 'solid'
+                                return block.name;
+                            })()
+
+                            const geometryObject: ChunkGeometry = (() => {
+                                if (geometryObjects.get(geometryKey)) {
+                                    return geometryObjects.get(geometryKey)!
+                                }
+
+                                const object = new ChunkGeometry(maxVertexCount)
+                                geometryObjects.set(geometryKey, object)
+                                return object
+                            })()
+
 
                             const u = uvs[i * 2 + 0]
                             const v = uvs[i * 2 + 1]
 
-                            // TODO: refactor
-                            allUvs[(lastIndex + i) * 2 + 0] = (u === 0 ? textureData.u[0] : textureData.u[1])
-                            allUvs[(lastIndex + i) * 2 + 1] = (v === 0 ? textureData.v[0] : textureData.v[1])
+                            const mappedUvs: number[] = [
+                                (u === 0 ? textureData.u[0] : textureData.u[1]),
+                                (v === 0 ? textureData.v[0] : textureData.v[1])
+                            ]
+
+                            const colors = [ambientOcclusion, ambientOcclusion, ambientOcclusion]
+
+                            geometryObject.streamVertexData({
+                                positions: positions.slice(i * 3, (i + 1) * 3),
+                                normals: normals.slice(i * 3, (i + 1) * 3),
+                                uvs: mappedUvs,
+                                colors,
+                            })
                         }
-                        lastIndex += vertexCount
                     }
                 }
             }
         }
 
-        const slicedPositions = allPositions.slice(0, lastIndex * 3)
-        const slicedNormals = allNormals.slice(0, lastIndex * 3)
-        const slicedColors = allColors.slice(0, lastIndex * 3)
-        const slicedUvs = allUvs.slice(0, lastIndex * 2)
+        const meshes: THREE.Mesh[] = []
 
-        const positionsBuffer = new THREE.BufferAttribute(new Float32Array(slicedPositions), 3)
-        const normalsBuffer = new THREE.BufferAttribute(new Float32Array(slicedNormals), 3)
-        const colorsBuffer = new THREE.BufferAttribute(new Float32Array(slicedColors), 3)
-        const uvsBuffer = new THREE.BufferAttribute(new Float32Array(slicedUvs), 2)
+        geometryObjects.forEach((geometryObject, key) => {
+            const geometry = geometryObject.bufferGeometry
 
-        geometry.setAttribute('position', positionsBuffer)
-        geometry.setAttribute('normal', normalsBuffer)
-        geometry.setAttribute('color', colorsBuffer)
-        geometry.setAttribute('uv', uvsBuffer)
+            const material = (() => {
+                if (key === 'solid') return opaqueMaterial
+                return transparentMaterial
+            })()
 
-        const mesh = new THREE.Mesh(geometry, material)
-        mesh.position.set(this.x * ChunkData.WIDTH, 0, this.z * ChunkData.DEPTH)
+            const mesh = new THREE.Mesh(geometry, material)
+            mesh.position.set(this.x * ChunkData.WIDTH, 0, this.z * ChunkData.DEPTH)
 
-        return mesh
+            meshes.push(mesh)
+        })
+
+        return meshes
     }
 }

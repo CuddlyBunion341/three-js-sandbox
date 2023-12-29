@@ -18,4 +18,5 @@ blocks.forEach(block => {
   })
 })
 
-export const material = new MeshBasicMaterial({ map: atlas.texture, wireframe: false, vertexColors: true, transparent: true })
+export const opaqueMaterial = new MeshMatcapMaterial({ map: atlas.texture, vertexColors: true })
+export const transparentMaterial = new MeshBasicMaterial({ map: atlas.texture, vertexColors: true, transparent: true })
