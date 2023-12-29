@@ -46,7 +46,7 @@ export class ChunkMesher extends ChunkData {
     }
 
     private isSolid(x: number, y: number, z: number) {
-        const block = this.getBlock(x, y, z)
+        const block = this.getNeighborBlock(x, y, z)
         return block !== BlockTypes.AIR && block !== undefined
     }
 
@@ -58,11 +58,10 @@ export class ChunkMesher extends ChunkData {
     private generateMesh() {
         const geometry = new THREE.BufferGeometry()
 
-        // const material = new THREE.MeshMatcapMaterial({ vertexColors: true })
-
         // 6 faces * 2 triangles per face * 3 vertices per triangle
         const maxVertexCount = 6 * 2 * 3 * ChunkData.WIDTH * ChunkData.HEIGHT * ChunkData.DEPTH
 
+        // TODO: refactor into chunk buffer geometry
         const allPositions: number[] = Array(maxVertexCount * 3)
         const allNormals: number[] = Array(maxVertexCount * 3)
         const allColors: number[] = Array(maxVertexCount * 3)
