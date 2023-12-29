@@ -1,4 +1,4 @@
-import { MeshBasicMaterial, MeshMatcapMaterial } from "three";
+import { DoubleSide, MeshBasicMaterial, MeshMatcapMaterial } from "three";
 import { TextureAtlas } from "./TextureAtlas";
 import { blocks, uniqueTextures } from "./Blocks";
 
@@ -19,4 +19,4 @@ blocks.forEach(block => {
 })
 
 export const opaqueMaterial = new MeshMatcapMaterial({ map: atlas.texture, vertexColors: true })
-export const transparentMaterial = new MeshBasicMaterial({ map: atlas.texture, vertexColors: true, transparent: true })
+export const transparentMaterial = new MeshBasicMaterial({ map: atlas.texture, vertexColors: true, transparent: true, side: DoubleSide })
