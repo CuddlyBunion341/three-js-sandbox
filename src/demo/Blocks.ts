@@ -13,6 +13,11 @@ function topSideBottom(top: string, side: string, bottom: string) {
   return [side, side, side, side, bottom, top]
 }
 
+function cross(texture: string) {
+  uniqueTextures.add(texture)
+  return [texture, texture]
+}
+
 export type BlockTexture = {
   name: string
   u: number[]
@@ -24,6 +29,8 @@ export type BlockProperty = {
   textures?: BlockTexture[]
 }
 
+export type BlockShape = 'empty' | 'block' | 'cross'
+
 export class Block {
   private static blockCount = 0
 
@@ -31,11 +38,13 @@ export class Block {
   public readonly name: string
   public readonly opaque: boolean
   public readonly textures: BlockTexture[]
+  public readonly shape: BlockShape
 
-  constructor(name: string, opaque: boolean, textureNames: string[]) {
+  constructor(name: string, shape: BlockShape, opaque: boolean, textureNames: string[]) {
     this.id = Block.blockCount++
     this.name = name
     this.opaque = opaque
+    this.shape = shape
     this.textures = textureNames.map(name => ({
       name,
       u: [0, 0],
@@ -45,13 +54,17 @@ export class Block {
 }
 
 export const blocks = [
-  new Block('air', false, []),
-  new Block('stone', true, allSides('stone')),
-  new Block('dirt', true, allSides('dirt')),
-  new Block('sand', true, allSides('sand')),
-  new Block('grass', true, topSideBottom('grass_block_top', 'grass_block_side', 'dirt')),
-  new Block('cobblestone', true, allSides('cobblestone')),
-  new Block('water', false, allSides('water'))
+  new Block('air', 'empty', false, []),
+  new Block('stone', 'block', true, allSides('stone')),
+  new Block('dirt', 'block', true, allSides('dirt')),
+  new Block('sand', 'block', true, allSides('sand')),
+  new Block('grass_block', 'block', true, topSideBottom('grass_block_top', 'grass_block_side', 'dirt')),
+  new Block('cobblestone', 'block', true, allSides('cobblestone')),
+  new Block('water', 'block', false, allSides('water')),
+  // new Block('rose', 'block', false, allSides('flower_rose')),
+  // new Block('grass', 'block', false, allSides('grass')),
+  new Block('rose', 'cross', false, cross('flower_rose')),
+  new Block('grass', 'cross', false, cross('grass')),
 ]
 
 export const BlockTypes = (() => {

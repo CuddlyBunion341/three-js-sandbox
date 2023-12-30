@@ -1,9 +1,9 @@
 import { Chunk } from "./Chunk"
 
 export class ChunkData {
-  public static readonly WIDTH = 16
+  public static readonly WIDTH = 32
   public static readonly HEIGHT = 128
-  public static readonly DEPTH = 16
+  public static readonly DEPTH = 32
 
   public blocks: Uint8Array
   public neighbors!: Chunk[] // -x, x, -z, z

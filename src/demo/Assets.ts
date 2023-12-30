@@ -1,4 +1,4 @@
-import { DoubleSide, MeshBasicMaterial, MeshMatcapMaterial } from "three";
+import { DoubleSide, MeshBasicMaterial, MeshMatcapMaterial, Texture } from "three";
 import { TextureAtlas } from "./TextureAtlas";
 import { blocks, uniqueTextures } from "./Blocks";
 
@@ -10,6 +10,8 @@ blocks.forEach(block => {
   block.textures.forEach((blockTexture, index) => {
     const { name } = blockTexture
 
+    if (!atlas.textureUvs[name]) throw new Error(`Texture ${name} is not loaded!`)
+
     block.textures[index] = {
       name,
       u: atlas.textureUvs[name].u,
@@ -19,4 +21,4 @@ blocks.forEach(block => {
 })
 
 export const opaqueMaterial = new MeshMatcapMaterial({ map: atlas.texture, vertexColors: true })
-export const transparentMaterial = new MeshBasicMaterial({ map: atlas.texture, vertexColors: true, transparent: true, side: DoubleSide })
+export const transparentMaterial = new MeshMatcapMaterial({ map: atlas.texture, transparent: true, side: DoubleSide })

@@ -85,13 +85,19 @@ export class TerrainGenerator {
 
     const belowSurfaceLevel = (y < surfaceLevel)
     const atSurfaceLevel = (y === Math.floor(surfaceLevel))
+    const atVegetationLayer = (y === Math.floor(surfaceLevel) + 1)
     const aboveSurfaceLevel = (y > surfaceLevel)
     const underSeaLevel = (y < 60)
 
     if (aboveSurfaceLevel && underSeaLevel) return BlockTypes.WATER
 
-    if (atSurfaceLevel) {
+    if (atVegetationLayer && Math.random() < 0.1) {
+      if (Math.random() < 0.1) {
+        return BlockTypes.ROSE
+      }
       return BlockTypes.GRASS
+    } else if (atSurfaceLevel) {
+      return BlockTypes.GRASS_BLOCK
     } else if (belowSurfaceLevel) {
       if (surfaceLevel - y < 5) return BlockTypes.DIRT
       if (y === 0) return BlockTypes.COBBLESTONE
