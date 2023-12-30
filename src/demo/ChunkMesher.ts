@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { GeometryBuilder } from "./GeometryBuilder"
 import { ChunkData } from './ChunkData'
 import { Block, BlockTypes, blocks } from './Blocks'
-import { opaqueMaterial, transparentMaterial } from './Assets'
+import { opaqueMaterial, transparentMaterial, waterMaterial } from './Assets'
 import { CustomGeometry } from './CustomGeometry'
 
 export class ChunkMesher extends ChunkData {
@@ -168,6 +168,7 @@ export class ChunkMesher extends ChunkData {
 
             const material = (() => {
                 if (key === 'solid') return opaqueMaterial
+                if (key === 'water') return waterMaterial
                 return transparentMaterial
             })()
 
