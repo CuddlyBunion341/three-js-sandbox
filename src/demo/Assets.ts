@@ -30,19 +30,25 @@ export const waterMaterial = new RawShaderMaterial({
   uniform mat4 modelMatrix;
   
   attribute vec3 position;
+  attribute vec2 uv;
+  varying vec2 vUv;
 
   void main() {
     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
     modelPosition.y -= 0.125;
     vec4 viewPosition = viewMatrix * modelPosition;
     gl_Position = projectionMatrix * viewPosition;
+    vUv = uv;
   }
   `,
   fragmentShader: `
   precision mediump float;
 
+  varying vec2 vUv;
+  uniform sampler2D texture;
+
   void main() {
-    gl_FragColor = vec4(0.0, 0.5, 0.5, 0.5);
+    gl_FragColor = texture2D(texture, vUv);
   }`, transparent: true
 })
 
