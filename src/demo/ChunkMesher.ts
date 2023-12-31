@@ -66,8 +66,7 @@ export class ChunkMesher extends ChunkData {
         const geometryBuilder = new GeometryBuilder()
 
         const getGeometryObject = (block: Block) => {
-            const key = block.opaque ? 'solid' : block.name === 'water' ? 'water' : Math.random().toFixed(4).toString()
-            // const key = block.opaque ? 'solid' : block.name
+            const key = block.opaque ? 'solid' : block.name
 
             if (geometryObjects.get(key)) {
                 return geometryObjects.get(key)!
@@ -110,9 +109,10 @@ export class ChunkMesher extends ChunkData {
                             const textureData = blockTextures[faceIndex]
                             if (!textureData) throw new Error(`Texture[${faceIndex}] not present on block ${blockId}`)
 
-                            const { positions, uvs, normals } = geometryBuilder.getFace(x, y, z, faceIndex)
+                            const { positions, uvs, normals } = geometryBuilder.getFace(textureData, x, y, z, faceIndex)
                             geometryObject.positions?.append(positions)
                             geometryObject.normals?.append(normals)
+                            geometryObject.uvs?.append(uvs)
 
                             for (let i = 0; i < vertexCount; i++) {
                                 const ambientOcclusion = Math.min(this.vertexAO(
@@ -122,38 +122,15 @@ export class ChunkMesher extends ChunkData {
 
                                 const colors = [ambientOcclusion, ambientOcclusion, ambientOcclusion]
                                 geometryObject.colors?.append(colors)
-
-                                const u = uvs[i * 2 + 0]
-                                const v = uvs[i * 2 + 1]
-
-                                const mappedUvs: number[] = [
-                                    (u === 0 ? textureData.u[0] : textureData.u[1]),
-                                    (v === 0 ? textureData.v[0] : textureData.v[1])
-                                ]
-
-                                geometryObject.uvs?.append(mappedUvs)
                             }
                         }
                     } else if (block.shape === 'cross') {
-                        const data = geometryBuilder.getCross(x, y, z)
+                        const textureData = blockTextures[0]
+                        const data = geometryBuilder.getCross(textureData, x, y, z)
+
                         geometryObject.positions?.append(data.positions)
                         geometryObject.normals?.append(data.normals)
-
-                        const textureData = blockTextures[0]
-
-                        const vertexCount = data.positions.length / 3
-
-                        for (let i = 0; i < vertexCount; i++) {
-                            const u = data.uvs[i * 2 + 0]
-                            const v = data.uvs[i * 2 + 1]
-
-                            const mappedUvs: number[] = [
-                                (u === 0 ? textureData.u[0] : textureData.u[1]),
-                                (v === 0 ? textureData.v[0] : textureData.v[1])
-                            ]
-
-                            geometryObject.uvs?.append(mappedUvs)
-                        }
+                        geometryObject.uvs?.append(data.uvs)
                     } else {
                         throw new Error(`Unknown block shape: ${block.shape}`)
                     }

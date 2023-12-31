@@ -1,3 +1,5 @@
+import { BlockTexture } from "./Blocks"
+
 type GeometryData = {
   positions: number[]
   normals: number[]
@@ -81,7 +83,7 @@ export class GeometryBuilder {
     // TODO: implement vertex indices
   }
 
-  public getFace(x: number, y: number, z: number, faceIndex: number) {
+  public getFace(textureData: BlockTexture, x: number, y: number, z: number, faceIndex: number) {
     const vertexCount = 6
     const positions: number[] = Array(vertexCount * 3)
     const normals: number[] = Array(vertexCount * 3)
@@ -103,8 +105,8 @@ export class GeometryBuilder {
       normals[index * 3 + 1] = vertexNormals[1]
       normals[index * 3 + 2] = vertexNormals[2]
 
-      uvs[index * 2 + 0] = vertex.uv[0]
-      uvs[index * 2 + 1] = vertex.uv[1]
+      uvs[index * 2 + 0] = vertex.uv[0] === 0 ? textureData.u[0] : textureData.u[1]
+      uvs[index * 2 + 1] = vertex.uv[1] === 0 ? textureData.v[0] : textureData.v[1]
 
       index++
     }
@@ -112,7 +114,7 @@ export class GeometryBuilder {
     return { positions, normals, uvs }
   }
 
-  public getCross(x: number, y: number, z: number) {
+  public getCross(textureData: BlockTexture, x: number, y: number, z: number) {
     const vertexCount = GeometryBuilder.crossVertices.length
 
     const positions: number[] = Array(vertexCount * 3)
@@ -135,8 +137,8 @@ export class GeometryBuilder {
       normals[index * 3 + 1] = vertexNormals[1]
       normals[index * 3 + 2] = vertexNormals[2]
 
-      uvs[index * 2 + 0] = vertex.uv[0]
-      uvs[index * 2 + 1] = vertex.uv[1]
+      uvs[index * 2 + 0] = vertex.uv[0] === 0 ? textureData.u[0] : textureData.u[1]
+      uvs[index * 2 + 1] = vertex.uv[1] === 0 ? textureData.v[0] : textureData.v[1]
 
       index++
     }
