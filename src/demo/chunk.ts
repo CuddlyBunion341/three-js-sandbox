@@ -18,7 +18,7 @@ export class Chunk extends ChunkMesher {
           const vy = y
           const vz = this.z * Chunk.DEPTH + z
           const block = this.terrainGenerator.getBlock(vx, vy, vz)
-          this.setBlock(x, y, z, block)
+          this.setUnsafeBlock(x, y, z, block)
         }
       }
     }
