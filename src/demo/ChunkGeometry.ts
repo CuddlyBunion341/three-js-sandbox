@@ -24,6 +24,24 @@ export class ChunkGeometry {
     this.lastIndex = 0
   }
 
+  public streamData(data: GeometryData) {
+    const { positions, normals, colors, uvs } = data
+
+    if (positions.length !== normals.length && normals.length !== colors.length) throw new Error('Data arrays need to share length!')
+
+    for (let i = 0; i < positions.length; i++) {
+      this.allPositions[this.lastIndex * 3 + i] = positions[i]
+      this.allNormals[this.lastIndex * 3 + i] = normals[i]
+      this.allColors[this.lastIndex * 3 + i] = colors[i]
+    }
+
+    for (let i = 0; i < uvs.length; i++) {
+      this.allUvs[this.lastIndex * 2 + i] = uvs[i]
+    }
+
+    this.lastIndex++
+  }
+
   public streamVertexData(data: GeometryData) {
     const { positions, normals, colors, uvs } = data
 

@@ -151,6 +151,8 @@ export class ChunkMesher extends ChunkData {
 
             const mesh = new THREE.Mesh(geometry, material)
             mesh.position.set(this.x * ChunkData.WIDTH, 0, this.z * ChunkData.DEPTH)
+            mesh.castShadow = true
+            mesh.receiveShadow = true
 
             mesh.renderOrder - 1
 

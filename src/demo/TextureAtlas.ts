@@ -1,4 +1,4 @@
-import { DisplayP3ColorSpace, NearestFilter, Texture } from "three"
+import { DisplayP3ColorSpace, LinearFilter, NearestFilter, NearestMipMapNearestFilter, NearestMipmapLinearFilter, Texture } from "three"
 
 export type TextureUvs = Record<string, { u: [number, number], v: [number, number] }>
 
@@ -34,7 +34,7 @@ export class TextureAtlas {
 
     this.texture = new Texture()
     this.texture.magFilter = NearestFilter
-    this.texture.minFilter = NearestFilter
+    this.texture.minFilter = LinearFilter
     this.texture.colorSpace = DisplayP3ColorSpace
   }
 

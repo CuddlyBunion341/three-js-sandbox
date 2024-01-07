@@ -1,4 +1,4 @@
-import { DoubleSide, MeshBasicMaterial, MeshMatcapMaterial, RawShaderMaterial, ShaderMaterial, Texture } from "three";
+import { DoubleSide, FrontSide, MeshDepthMaterial, MeshPhysicalMaterial } from "three";
 import { TextureAtlas } from "./TextureAtlas";
 import { blocks, uniqueTextures } from "./Blocks";
 
@@ -20,38 +20,44 @@ blocks.forEach(block => {
   })
 })
 
-export const opaqueMaterial = new MeshMatcapMaterial({ map: atlas.texture, vertexColors: true })
-export const transparentMaterial = new MeshMatcapMaterial({ map: atlas.texture, transparent: true, side: DoubleSide })
+export const opaqueMaterial = new MeshPhysicalMaterial({ map: atlas.texture, vertexColors: true, side: FrontSide })
+export const transparentMaterial = new MeshPhysicalMaterial({ map: atlas.texture, transparent: true, side: DoubleSide, alphaMap: atlas.texture, alphaTest: 0.005 })
 // export const transparentMaterial = new MeshBasicMaterial({ wireframe: true, transparent: true, side: DoubleSide })
-export const waterMaterial = new RawShaderMaterial({
-  vertexShader: `
-  uniform mat4 projectionMatrix;
-  uniform mat4 viewMatrix;
-  uniform mat4 modelMatrix;
-  
-  attribute vec3 position;
-  attribute vec2 uv;
-  varying vec2 vUv;
+// export const waterMaterial = new RawShaderMaterial({
+//   vertexShader: `
+//   uniform mat4 projectionMatrix;
+//   uniform mat4 viewMatrix;
+//   uniform mat4 modelMatrix;
 
-  void main() {
-    vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-    modelPosition.y -= 0.125;
-    vec4 viewPosition = viewMatrix * modelPosition;
-    gl_Position = projectionMatrix * viewPosition;
-    vUv = uv;
-  }
-  `,
-  fragmentShader: `
-  precision mediump float;
+//   attribute vec3 position;
+//   attribute vec2 uv;
 
-  varying vec2 vUv;
-  uniform sampler2D texture;
+//   varying vec2 vUv;
+//   varying vec3 vPos;
 
-  void main() {
-    gl_FragColor = texture2D(texture, vUv);
-  }`, transparent: true
-})
+//   void main() {
+//     vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+//     modelPosition.y -= 0.125;
+//     vec4 viewPosition = viewMatrix * modelPosition;
+//     gl_Position = projectionMatrix * viewPosition;
+//     vUv = uv;
+//     vPos = position;
+//   }
+//   `,
+//   fragmentShader: `
+//   precision mediump float;
 
+//   varying vec2 vUv;
+//   varying vec3 vPos;
+//   uniform sampler2D texture;
+
+//   void main() {
+//     gl_FragColor = texture2D(texture, vUv);
+//     // gl_FragColor = vec4(vPos.x / 32.0, 0.5,1,1);
+//   }`, transparent: true
+// })
+
+export const waterMaterial = new MeshDepthMaterial({ map: atlas.texture, transparent: true, side: DoubleSide })
 
 // const debugTexture = new Texture()
 // export const transparentMaterial = new MeshBasicMaterial({ map: debugTexture })

@@ -65,6 +65,7 @@ export const blocks = [
   // new Block('grass', 'block', false, allSides('grass')),
   new Block('rose', 'cross', false, cross('flower_rose')),
   new Block('grass', 'cross', false, cross('grass')),
+  new Block('coal_ore', 'block', false, allSides('coal_block')),
 ]
 
 export const BlockTypes = (() => {

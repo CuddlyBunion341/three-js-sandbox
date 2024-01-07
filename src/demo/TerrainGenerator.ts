@@ -5,12 +5,12 @@ import { NoiseVisualizer } from "./NoiseVisualizer"
 import { BlockTypes } from "./Blocks"
 
 export class LayeredNoise {
-  private baseFrequency = 0.005
-  private baseFrequency3d = 0.001
+  public baseFrequency = 0.005
+  public baseFrequency3d = 0.01
 
-  private baseAmplitude = 20
-  private octaves = 4
-  private octaveFactor = 2
+  public baseAmplitude = 20
+  public octaves = 4
+  public persistence = 2
 
   private spline: Spline
 
@@ -32,9 +32,9 @@ export class LayeredNoise {
 
     for (let o = 1; o <= this.octaves; o++) {
       value += this.noise2d(
-        x * this.baseFrequency * this.octaveFactor * o,
-        z * this.baseFrequency * this.octaveFactor * o
-      ) * this.baseAmplitude / (this.octaveFactor * o)
+        x * this.baseFrequency * this.persistence * o,
+        z * this.baseFrequency * this.persistence * o
+      ) * this.baseAmplitude / (this.persistence * o)
     }
 
     return value
@@ -45,10 +45,10 @@ export class LayeredNoise {
 
     for (let o = 1; o <= 8; o++) {
       value += this.noise3d(
-        x * this.baseFrequency3d * this.octaveFactor * o,
-        y * this.baseFrequency3d * this.octaveFactor * o * 2,
-        z * this.baseFrequency3d * this.octaveFactor * o,
-      ) * this.baseAmplitude / (this.octaveFactor * o)
+        x * this.baseFrequency3d * this.persistence * o,
+        y * this.baseFrequency3d * this.persistence * o * 2,
+        z * this.baseFrequency3d * this.persistence * o,
+      ) * this.baseAmplitude / (this.persistence * o)
     }
 
     return value
@@ -57,9 +57,12 @@ export class LayeredNoise {
 
 export class TerrainGenerator {
   private noise: LayeredNoise
+  // private coalNoise: LayeredNoise
 
   constructor(seed = 0) {
     this.noise = new LayeredNoise(seed)
+    // this.coalNoise = new LayeredNoise(seed)
+    // this.coalNoise.baseFrequency3d = 0.001
 
     // const visualizer = new NoiseVisualizer(256, 256, (x, y) => this.noise.sample2d(x, y), { min: -14, max: 10 })
     // const url = visualizer.generateMap()
@@ -75,6 +78,9 @@ export class TerrainGenerator {
     const continentalNess = this.noise.sample2d(x, z)
     const minSurfaceY = 64
 
+    // const coalDensity = this.coalNoise.sample3d(x, y, z)
+    // if (coalDensity > 10) return BlockTypes.COAL_ORE
+
     const density = this.noise.sample3d(x, y, z)
 
     const caveAir = (density > 10)
@@ -89,21 +95,24 @@ export class TerrainGenerator {
     const aboveSurfaceLevel = (y > surfaceLevel)
     const underSeaLevel = (y < 60)
 
+    if ((atSurfaceLevel || belowSurfaceLevel && y + 3 > surfaceLevel) && underSeaLevel) return BlockTypes.SAND
     if (aboveSurfaceLevel && underSeaLevel) return BlockTypes.WATER
 
     if (atVegetationLayer && Math.random() < 0.1) {
-      if (Math.random() < 0.1) {
-        return BlockTypes.ROSE
-      }
+      if (Math.random() < 0.1) return BlockTypes.ROSE
       return BlockTypes.GRASS
-    } else if (atSurfaceLevel) {
+    }
+
+    if (atSurfaceLevel) {
       return BlockTypes.GRASS_BLOCK
-    } else if (belowSurfaceLevel) {
+    }
+
+    if (belowSurfaceLevel) {
       if (surfaceLevel - y < 5) return BlockTypes.DIRT
       if (y === 0) return BlockTypes.COBBLESTONE
       return BlockTypes.STONE
-    } else {
-      return BlockTypes.AIR
     }
+
+    return BlockTypes.AIR
   }
 }
